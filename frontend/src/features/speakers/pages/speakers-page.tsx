@@ -19,7 +19,12 @@ export function SpeakersPage() {
   });
 
   return (
-    <div className="speakers-page">
+    <motion.div
+      className="speakers-page"
+      initial={{ opacity: 0, y: 8 }}
+      animate={{ opacity: 1, y: 0 }}
+      transition={{ duration: 0.3, ease: [0.16, 1, 0.3, 1] }}
+    >
       <div className="page-header">
         <h1>Speakers</h1>
         {canManage && (
@@ -60,6 +65,6 @@ export function SpeakersPage() {
       <Modal isOpen={isCreateOpen} title="Add Speaker" onClose={() => setIsCreateOpen(false)}>
         <SpeakerForm onSuccess={() => setIsCreateOpen(false)} onCancel={() => setIsCreateOpen(false)} />
       </Modal>
-    </div>
+    </motion.div>
   );
 }
