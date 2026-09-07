@@ -7,17 +7,27 @@ import {
 import { InjectModel } from '@nestjs/mongoose';
 import { Model, Types, type QueryFilter } from 'mongoose';
 import { Event, EventDocument } from './schemas/event.schema.js';
+import {
+  EventStatusHistory,
+  EventStatusHistoryDocument,
+} from './schemas/event-status-history.schema.js';
 import { CreateEventDto } from './dto/create-event.dto.js';
 import { UpdateEventDto } from './dto/update-event.dto.js';
 import { QueryEventsDto } from './dto/query-events.dto.js';
 import { EventStatus, isValidEventTransition } from './event-status.enum.js';
-import type { PaginatedResult } from '../../common/dto/pagination-query.dto.js';
+import { resolveSortField, type PaginatedResult } from '../../common/dto/pagination-query.dto.js';
 import type { AuthenticatedUser } from '../../common/types/authenticated-user.js';
 import { Role } from '../../common/enums/role.enum.js';
 
+const SORTABLE_FIELDS = ['startDate', 'endDate', 'name', 'status', 'createdAt'] as const;
+
 @Injectable()
 export class EventsService {
-  constructor(@InjectModel(Event.name) private readonly eventModel: Model<EventDocument>) {}
+  constructor(
+    @InjectModel(Event.name) private readonly eventModel: Model<EventDocument>,
+    @InjectModel(EventStatusHistory.name)
+    private readonly historyModel: Model<EventStatusHistoryDocument>,
+  ) {}
 
   async create(dto: CreateEventDto, owner: AuthenticatedUser): Promise<EventDocument> {
     if (new Date(dto.endDate) <= new Date(dto.startDate)) {
@@ -57,12 +67,15 @@ export class EventsService {
       filter.$text = { $search: query.search };
     }
 
+    const sortField = resolveSortField(query.sortBy, SORTABLE_FIELDS, 'startDate');
+    const sortOrder = query.sortOrder === 'desc' ? -1 : 1;
+
     const [items, total] = await Promise.all([
       this.eventModel
         .find(filter)
         .skip(query.skip)
         .limit(query.limit)
-        .sort({ startDate: 1 })
+        .sort({ [sortField]: sortOrder })
         .exec(),
       this.eventModel.countDocuments(filter).exec(),
     ]);
@@ -124,13 +137,11 @@ export class EventsService {
       );
     }
 
-    event.status = targetStatus;
     if (targetStatus === EventStatus.ARCHIVED) {
       event.isArchived = true;
     }
 
-    await event.save();
-    return event;
+    return this.recordTransition(event, targetStatus, actor, '');
   }
 
   async archive(id: string, actor: AuthenticatedUser): Promise<EventDocument> {
@@ -141,9 +152,34 @@ export class EventsService {
       throw new BadRequestException('Only completed events can be archived');
     }
 
-    event.status = EventStatus.ARCHIVED;
     event.isArchived = true;
+    return this.recordTransition(event, EventStatus.ARCHIVED, actor, '');
+  }
+
+  /**
+   * Applies a status change and writes a single audit row for it. Used for
+   * both ordinary lifecycle transitions here and the approval-specific
+   * submit/approve/reject transitions in ApprovalsService, so every status
+   * change — not only approvals — ends up in the same auditable history.
+   */
+  async recordTransition(
+    event: EventDocument,
+    newStatus: EventStatus,
+    actor: AuthenticatedUser,
+    comment: string,
+  ): Promise<EventDocument> {
+    const previousStatus = event.status;
+    event.status = newStatus;
     await event.save();
+
+    await this.historyModel.create({
+      event: event._id,
+      actor: new Types.ObjectId(actor.userId),
+      previousStatus,
+      newStatus,
+      comment,
+    });
+
     return event;
   }
 

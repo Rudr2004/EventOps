@@ -7,6 +7,10 @@ import { AuthModule } from './modules/auth/auth.module.js';
 import { UsersModule } from './modules/users/users.module.js';
 import { HealthModule } from './modules/health/health.module.js';
 import { EventsModule } from './modules/events/events.module.js';
+import { SpeakersModule } from './modules/speakers/speakers.module.js';
+import { SessionsModule } from './modules/sessions/sessions.module.js';
+import { TasksModule } from './modules/tasks/tasks.module.js';
+import { ApprovalsModule } from './modules/approvals/approvals.module.js';
 import { JwtAuthGuard } from './common/guards/jwt-auth.guard.js';
 import type { AppConfig } from './config/configuration.js';
 
@@ -26,6 +30,10 @@ import type { AppConfig } from './config/configuration.js';
     UsersModule,
     HealthModule,
     EventsModule,
+    SpeakersModule,
+    SessionsModule,
+    TasksModule,
+    ApprovalsModule,
   ],
   providers: [
     {

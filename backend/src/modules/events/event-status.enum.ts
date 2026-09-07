@@ -11,11 +11,18 @@ export enum EventStatus {
 /**
  * Linear lifecycle with one rejection loop: Approval Pending can bounce back
  * to Planning. Archived is a terminal state reachable only from Completed.
+ *
+ * The Planning->ApprovalPending, ApprovalPending->Approved and
+ * ApprovalPending->Planning edges are deliberately NOT included here — they
+ * only happen through the dedicated submit/approve/reject endpoints, which
+ * enforce their own actor rules (only the owning Event Manager submits, only
+ * Admin approves/rejects) and write an audited history entry with a comment.
+ * PATCH .../status is for the remaining ordinary transitions only.
  */
 export const ALLOWED_EVENT_TRANSITIONS: Record<EventStatus, EventStatus[]> = {
   [EventStatus.DRAFT]: [EventStatus.PLANNING],
-  [EventStatus.PLANNING]: [EventStatus.APPROVAL_PENDING],
-  [EventStatus.APPROVAL_PENDING]: [EventStatus.APPROVED, EventStatus.PLANNING],
+  [EventStatus.PLANNING]: [],
+  [EventStatus.APPROVAL_PENDING]: [],
   [EventStatus.APPROVED]: [EventStatus.LIVE],
   [EventStatus.LIVE]: [EventStatus.COMPLETED],
   [EventStatus.COMPLETED]: [EventStatus.ARCHIVED],

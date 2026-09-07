@@ -20,10 +20,16 @@ export const EVENT_STATUS_LABELS: Record<EventStatus, string> = {
   [EventStatus.ARCHIVED]: 'Archived',
 };
 
+/**
+ * Ordinary lifecycle transitions reachable via PATCH /events/:id/status.
+ * Planning->ApprovalPending, ApprovalPending->Approved and
+ * ApprovalPending->Planning are approval-specific and only available via
+ * the dedicated submit/approve/reject actions (see the approvals feature).
+ */
 export const EVENT_STATUS_TRANSITIONS: Record<EventStatus, EventStatus[]> = {
   [EventStatus.DRAFT]: [EventStatus.PLANNING],
-  [EventStatus.PLANNING]: [EventStatus.APPROVAL_PENDING],
-  [EventStatus.APPROVAL_PENDING]: [EventStatus.APPROVED, EventStatus.PLANNING],
+  [EventStatus.PLANNING]: [],
+  [EventStatus.APPROVAL_PENDING]: [],
   [EventStatus.APPROVED]: [EventStatus.LIVE],
   [EventStatus.LIVE]: [EventStatus.COMPLETED],
   [EventStatus.COMPLETED]: [EventStatus.ARCHIVED],

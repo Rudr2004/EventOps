@@ -1,5 +1,5 @@
 import { Prop, Schema, SchemaFactory } from '@nestjs/mongoose';
-import { HydratedDocument, Types } from 'mongoose';
+import { HydratedDocument, Schema as MongooseSchema, Types } from 'mongoose';
 import { EventStatus } from '../event-status.enum.js';
 
 export type EventDocument = HydratedDocument<Event>;
@@ -21,7 +21,7 @@ export class Event {
   @Prop({ required: true })
   endDate: Date;
 
-  @Prop({ type: Types.ObjectId, ref: 'User', required: true, index: true })
+  @Prop({ type: MongooseSchema.Types.ObjectId, ref: 'User', required: true, index: true })
   owner: Types.ObjectId;
 
   @Prop({ type: String, enum: EventStatus, default: EventStatus.DRAFT, index: true })
