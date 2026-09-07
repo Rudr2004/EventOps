@@ -5,10 +5,11 @@ import * as bcrypt from 'bcrypt';
 import { User, UserDocument } from './schemas/user.schema.js';
 import { CreateUserDto } from './dto/create-user.dto.js';
 import { Role } from '../../common/enums/role.enum.js';
-import type { PaginatedResult } from '../../common/dto/pagination-query.dto.js';
-import type { PaginationQueryDto } from '../../common/dto/pagination-query.dto.js';
+import { resolveSortField, type PaginatedResult } from '../../common/dto/pagination-query.dto.js';
+import type { QueryUsersDto } from './dto/query-users.dto.js';
 
 const SALT_ROUNDS = 12;
+const SORTABLE_FIELDS = ['name', 'email', 'role', 'createdAt'] as const;
 
 @Injectable()
 export class UsersService {
@@ -31,10 +32,20 @@ export class UsersService {
     });
   }
 
-  async findAll(query: PaginationQueryDto): Promise<PaginatedResult<UserDocument>> {
+  async findAll(query: QueryUsersDto): Promise<PaginatedResult<UserDocument>> {
+    const filter = query.role ? { role: query.role } : {};
+
+    const sortField = resolveSortField(query.sortBy, SORTABLE_FIELDS, 'createdAt');
+    const sortOrder = query.sortOrder === 'asc' ? 1 : -1;
+
     const [items, total] = await Promise.all([
-      this.userModel.find().skip(query.skip).limit(query.limit).sort({ createdAt: -1 }).exec(),
-      this.userModel.countDocuments().exec(),
+      this.userModel
+        .find(filter)
+        .skip(query.skip)
+        .limit(query.limit)
+        .sort({ [sortField]: sortOrder })
+        .exec(),
+      this.userModel.countDocuments(filter).exec(),
     ]);
 
     return {

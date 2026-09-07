@@ -15,10 +15,10 @@ export class User {
   @Prop({ required: true, select: false })
   passwordHash: string;
 
-  @Prop({ type: String, required: true, enum: Role, default: Role.VIEWER })
+  @Prop({ type: String, required: true, enum: Role, default: Role.VIEWER, index: true })
   role: Role;
 
-  @Prop({ default: true })
+  @Prop({ default: true, index: true })
   isActive: boolean;
 
   @Prop({ type: String, select: false, default: null })

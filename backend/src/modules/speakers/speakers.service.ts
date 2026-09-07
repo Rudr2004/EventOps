@@ -4,7 +4,13 @@ import { Model } from 'mongoose';
 import { Speaker, SpeakerDocument } from './schemas/speaker.schema.js';
 import { CreateSpeakerDto } from './dto/create-speaker.dto.js';
 import { UpdateSpeakerDto } from './dto/update-speaker.dto.js';
-import type { PaginatedResult, PaginationQueryDto } from '../../common/dto/pagination-query.dto.js';
+import {
+  resolveSortField,
+  type PaginatedResult,
+  type PaginationQueryDto,
+} from '../../common/dto/pagination-query.dto.js';
+
+const SORTABLE_FIELDS = ['name', 'createdAt'] as const;
 
 @Injectable()
 export class SpeakersService {
@@ -20,8 +26,16 @@ export class SpeakersService {
   }
 
   async findAll(query: PaginationQueryDto): Promise<PaginatedResult<SpeakerDocument>> {
+    const sortField = resolveSortField(query.sortBy, SORTABLE_FIELDS, 'name');
+    const sortOrder = query.sortOrder === 'desc' ? -1 : 1;
+
     const [items, total] = await Promise.all([
-      this.speakerModel.find().skip(query.skip).limit(query.limit).sort({ name: 1 }).exec(),
+      this.speakerModel
+        .find()
+        .skip(query.skip)
+        .limit(query.limit)
+        .sort({ [sortField]: sortOrder })
+        .exec(),
       this.speakerModel.countDocuments().exec(),
     ]);
 

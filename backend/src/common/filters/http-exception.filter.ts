@@ -15,6 +15,7 @@ interface ErrorResponseBody {
   timestamp: string;
   message: string | string[];
   error: string;
+  correlationId?: string;
 }
 
 @Catch()
@@ -54,15 +55,15 @@ export class AllExceptionsFilter implements ExceptionFilter {
       timestamp: new Date().toISOString(),
       message,
       error,
+      correlationId: request.correlationId,
     };
 
+    const logLine = `${request.method} ${request.url} -> ${statusCode} correlationId=${request.correlationId ?? 'unknown'}`;
+
     if (statusCode >= HttpStatus.INTERNAL_SERVER_ERROR) {
-      this.logger.error(
-        `${request.method} ${request.url} -> ${statusCode}`,
-        exception instanceof Error ? exception.stack : String(exception),
-      );
+      this.logger.error(logLine, exception instanceof Error ? exception.stack : String(exception));
     } else {
-      this.logger.warn(`${request.method} ${request.url} -> ${statusCode}: ${JSON.stringify(message)}`);
+      this.logger.warn(`${logLine}: ${JSON.stringify(message)}`);
     }
 
     response.status(statusCode).json(body);

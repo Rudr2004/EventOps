@@ -1,17 +1,17 @@
 import { EventStatus, isValidEventTransition } from './event-status.enum.js';
 
 describe('isValidEventTransition', () => {
-  it('allows the standard forward progression through the lifecycle', () => {
+  it('allows the ordinary lifecycle transitions handled outside the approval flow', () => {
     expect(isValidEventTransition(EventStatus.DRAFT, EventStatus.PLANNING)).toBe(true);
-    expect(isValidEventTransition(EventStatus.PLANNING, EventStatus.APPROVAL_PENDING)).toBe(true);
-    expect(isValidEventTransition(EventStatus.APPROVAL_PENDING, EventStatus.APPROVED)).toBe(true);
     expect(isValidEventTransition(EventStatus.APPROVED, EventStatus.LIVE)).toBe(true);
     expect(isValidEventTransition(EventStatus.LIVE, EventStatus.COMPLETED)).toBe(true);
     expect(isValidEventTransition(EventStatus.COMPLETED, EventStatus.ARCHIVED)).toBe(true);
   });
 
-  it('allows a rejected approval to return to planning', () => {
-    expect(isValidEventTransition(EventStatus.APPROVAL_PENDING, EventStatus.PLANNING)).toBe(true);
+  it('excludes the approval-specific edges, which only happen via submit/approve/reject', () => {
+    expect(isValidEventTransition(EventStatus.PLANNING, EventStatus.APPROVAL_PENDING)).toBe(false);
+    expect(isValidEventTransition(EventStatus.APPROVAL_PENDING, EventStatus.APPROVED)).toBe(false);
+    expect(isValidEventTransition(EventStatus.APPROVAL_PENDING, EventStatus.PLANNING)).toBe(false);
   });
 
   it('rejects skipping steps forward', () => {
