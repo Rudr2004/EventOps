@@ -156,7 +156,37 @@ describe('Events (e2e)', () => {
     );
   });
 
-  it('walks an event through its valid lifecycle transitions', async () => {
+  it('sorts events by name when sortBy=name is requested', async () => {
+    await request(app.getHttpServer())
+      .post('/api/v1/events')
+      .set('Authorization', `Bearer ${managerToken}`)
+      .send({
+        name: 'AAA Sort Test Event',
+        venue: 'Hall Z',
+        startDate: '2026-12-10T09:00:00.000Z',
+        endDate: '2026-12-11T09:00:00.000Z',
+      })
+      .expect(201)
+      .then((res) => createdEventIds.push(res.body.data.id));
+
+    const res = await request(app.getHttpServer())
+      .get('/api/v1/events?sortBy=name&sortOrder=asc&limit=100')
+      .set('Authorization', `Bearer ${managerToken}`)
+      .expect(200);
+
+    const names = res.body.data.items.map((e: { name: string }) => e.name);
+    const sortedNames = [...names].sort((a, b) => a.localeCompare(b));
+    expect(names).toEqual(sortedNames);
+  });
+
+  it('ignores an unwhitelisted sortBy field and falls back to the default sort', async () => {
+    await request(app.getHttpServer())
+      .get('/api/v1/events?sortBy=ownerPasswordHash&limit=5')
+      .set('Authorization', `Bearer ${managerToken}`)
+      .expect(200);
+  });
+
+  it('walks an event through its valid ordinary lifecycle transitions', async () => {
     const createRes = await request(app.getHttpServer())
       .post('/api/v1/events')
       .set('Authorization', `Bearer ${managerToken}`)
@@ -176,11 +206,13 @@ describe('Events (e2e)', () => {
       .send({ status: 'planning' })
       .expect(200);
 
-    await request(app.getHttpServer())
+    // Planning -> Approval Pending is approval-specific and only reachable via /submit now.
+    const blockedRes = await request(app.getHttpServer())
       .patch(`/api/v1/events/${eventId}/status`)
       .set('Authorization', `Bearer ${managerToken}`)
       .send({ status: 'approval_pending' })
-      .expect(200);
+      .expect(400);
+    expect(blockedRes.body.success).toBe(false);
 
     const rejectedRes = await request(app.getHttpServer())
       .patch(`/api/v1/events/${eventId}/status`)

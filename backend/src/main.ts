@@ -6,6 +6,8 @@ import helmet from 'helmet';
 import { AppModule } from './app.module.js';
 import { AllExceptionsFilter } from './common/filters/http-exception.filter.js';
 import { TransformInterceptor } from './common/interceptors/transform.interceptor.js';
+import { RequestLoggingInterceptor } from './common/interceptors/request-logging.interceptor.js';
+import { CorrelationIdMiddleware } from './common/middleware/correlation-id.middleware.js';
 import type { AppConfig } from './config/configuration.js';
 
 async function bootstrap() {
@@ -13,7 +15,9 @@ async function bootstrap() {
   const configService = app.get(ConfigService);
   const appConfig = configService.get<AppConfig>('app');
 
+  const correlationIdMiddleware = new CorrelationIdMiddleware();
   app.use(helmet());
+  app.use(correlationIdMiddleware.use.bind(correlationIdMiddleware));
   app.enableCors({ origin: appConfig?.corsOrigin, credentials: true });
   app.setGlobalPrefix(appConfig?.apiPrefix ?? 'api/v1');
 
@@ -27,7 +31,7 @@ async function bootstrap() {
   );
 
   app.useGlobalFilters(new AllExceptionsFilter());
-  app.useGlobalInterceptors(new TransformInterceptor());
+  app.useGlobalInterceptors(new RequestLoggingInterceptor(), new TransformInterceptor());
 
   const swaggerConfig = new DocumentBuilder()
     .setTitle('EventOps Intelligence Platform API')

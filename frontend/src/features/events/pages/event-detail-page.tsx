@@ -10,6 +10,7 @@ import { ConfirmDialog } from '../../../components/ui/confirm-dialog';
 import { EventForm } from '../components/event-form';
 import { SessionForm } from '../../sessions/components/session-form';
 import { ScheduleTimeline } from '../../sessions/components/schedule-timeline';
+import { ApprovalPanel } from '../../approvals/components/approval-panel';
 import { useAuth } from '../../auth/auth-context';
 import { Role } from '../../../types/auth';
 import { EVENT_STATUS_LABELS, EVENT_STATUS_TRANSITIONS, EventStatus } from '../../../types/event';
@@ -98,6 +99,13 @@ export function EventDetailPage() {
           <button type="button" className="btn-secondary" onClick={() => setIsEditOpen(true)}>
             Edit details
           </button>
+          <button
+            type="button"
+            className="btn-secondary"
+            onClick={() => navigate(`/tasks?event=${event.id}`)}
+          >
+            View Tasks
+          </button>
           {availableTransitions.map((status) => (
             <button
               key={status}
@@ -114,6 +122,8 @@ export function EventDetailPage() {
       {transitionMutation.isError && (
         <Alert message={extractErrorMessage(transitionMutation.error)} />
       )}
+
+      <ApprovalPanel event={event} isOwner={event.owner === user?.id} />
 
       <section className="schedule-section">
         <div className="page-header">

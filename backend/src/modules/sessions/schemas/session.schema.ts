@@ -35,3 +35,4 @@ export const SessionSchema = SchemaFactory.createForClass(Session);
 
 SessionSchema.index({ event: 1, startTime: 1 });
 SessionSchema.index({ room: 1, startTime: 1, endTime: 1 });
+SessionSchema.index({ speakers: 1, startTime: 1, endTime: 1 });
