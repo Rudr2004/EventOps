@@ -1,6 +1,7 @@
 import { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { useQuery } from '@tanstack/react-query';
+import { motion } from 'framer-motion';
 import { eventsApi } from '../../../api/events.api';
 import { Table, type TableColumn } from '../../../components/ui/table';
 import { Badge } from '../../../components/ui/badge';
@@ -54,7 +55,12 @@ export function EventsListPage() {
   ];
 
   return (
-    <div className="events-page">
+    <motion.div
+      className="events-page"
+      initial={{ opacity: 0, y: 8 }}
+      animate={{ opacity: 1, y: 0 }}
+      transition={{ duration: 0.3, ease: [0.16, 1, 0.3, 1] }}
+    >
       <div className="page-header">
         <h1>Events</h1>
         {canCreate && (
@@ -116,6 +122,6 @@ export function EventsListPage() {
           onCancel={() => setIsCreateOpen(false)}
         />
       </Modal>
-    </div>
+    </motion.div>
   );
 }
