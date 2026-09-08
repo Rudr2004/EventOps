@@ -12,6 +12,7 @@ import { SessionsModule } from './modules/sessions/sessions.module.js';
 import { TasksModule } from './modules/tasks/tasks.module.js';
 import { ApprovalsModule } from './modules/approvals/approvals.module.js';
 import { IncidentsModule } from './modules/incidents/incidents.module.js';
+import { AnalyticsModule } from './modules/analytics/analytics.module.js';
 import { JwtAuthGuard } from './common/guards/jwt-auth.guard.js';
 import type { AppConfig } from './config/configuration.js';
 
@@ -36,6 +37,7 @@ import type { AppConfig } from './config/configuration.js';
     TasksModule,
     ApprovalsModule,
     IncidentsModule,
+    AnalyticsModule,
   ],
   providers: [
     {

@@ -2,9 +2,11 @@ import type { ReactNode } from 'react';
 import { NavLink } from 'react-router-dom';
 import { useAuth } from '../../features/auth/auth-context';
 import { HealthIndicator } from './health-indicator';
+import { Role } from '../../types/auth';
 
 export function AppShell({ children }: { children: ReactNode }) {
   const { user, logout } = useAuth();
+  const canSeeAnalytics = user?.role === Role.ADMIN || user?.role === Role.EVENT_MANAGER;
 
   return (
     <div className="app-shell">
@@ -22,6 +24,7 @@ export function AppShell({ children }: { children: ReactNode }) {
             <NavLink to="/speakers">Speakers</NavLink>
             <NavLink to="/tasks">Tasks</NavLink>
             <NavLink to="/incidents">Incidents</NavLink>
+            {canSeeAnalytics && <NavLink to="/analytics">Analytics</NavLink>}
           </nav>
           <HealthIndicator />
         </div>

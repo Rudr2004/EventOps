@@ -76,6 +76,20 @@
   --radius-md: 11px;
   --radius-lg: 16px;
 
+  /* Chart categorical palette — validated (see dataviz skill), opens on
+     copper to match the accent, ordered for CVD-safe adjacency. */
+  --chart-1: #eb6834;
+  --chart-2: #2a78d6;
+  --chart-3: #1baf7a;
+  --chart-4: #eda100;
+  --chart-5: #e87ba4;
+  --chart-6: #4a3aa7;
+  --chart-7: #008300;
+  --chart-8: #e34948;
+  --chart-grid: var(--ink-200);
+  --chart-axis: var(--ink-300);
+  --chart-surface: var(--surface);
+
   font: 15px/1.55 var(--font-body);
   color-scheme: light;
   color: var(--text);
@@ -110,6 +124,17 @@
     --shadow-md: 0 4px 16px rgba(0, 0, 0, 0.35), 0 1px 3px rgba(0, 0, 0, 0.3);
     --shadow-lg: 0 20px 48px rgba(0, 0, 0, 0.5), 0 6px 14px rgba(0, 0, 0, 0.35);
     --focus-ring: 0 0 0 3px rgba(224, 130, 40, 0.28);
+    --chart-1: #d95926;
+    --chart-2: #3987e5;
+    --chart-3: #199e70;
+    --chart-4: #c98500;
+    --chart-5: #d55181;
+    --chart-6: #9085e9;
+    --chart-7: #008300;
+    --chart-8: #e66767;
+    --chart-grid: var(--ink-700);
+    --chart-axis: var(--ink-600);
+    --chart-surface: var(--surface);
     color-scheme: dark;
   }
 }
@@ -140,6 +165,17 @@
   --shadow-md: 0 4px 16px rgba(0, 0, 0, 0.35), 0 1px 3px rgba(0, 0, 0, 0.3);
   --shadow-lg: 0 20px 48px rgba(0, 0, 0, 0.5), 0 6px 14px rgba(0, 0, 0, 0.35);
   --focus-ring: 0 0 0 3px rgba(224, 130, 40, 0.28);
+  --chart-1: #d95926;
+  --chart-2: #3987e5;
+  --chart-3: #199e70;
+  --chart-4: #c98500;
+  --chart-5: #d55181;
+  --chart-6: #9085e9;
+  --chart-7: #008300;
+  --chart-8: #e66767;
+  --chart-grid: var(--ink-700);
+  --chart-axis: var(--ink-600);
+  --chart-surface: var(--surface);
   color-scheme: dark;
 }
 
@@ -1218,6 +1254,211 @@ button:disabled { opacity: 0.55; cursor: not-allowed; transform: none !important
 }
 
 .critical-banner-item:hover { background: var(--error); color: #fff; }
+
+/* ==========================================================================
+   Analytics — stat tiles, charts, cards
+   ========================================================================== */
+.analytics-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(160px, 1fr));
+  gap: 14px;
+  margin-bottom: 28px;
+}
+
+.stat-tile {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: var(--radius-md);
+  padding: 18px 20px;
+  box-shadow: var(--shadow-sm);
+}
+
+.stat-tile-label {
+  font-size: 12px;
+  color: var(--text-faint);
+  text-transform: uppercase;
+  letter-spacing: 0.04em;
+  font-weight: 600;
+}
+
+.stat-tile-value {
+  font-family: var(--font-display);
+  font-size: 32px;
+  font-weight: 600;
+  color: var(--text-h);
+  line-height: 1.1;
+}
+
+.stat-tile-danger .stat-tile-value { color: var(--error); }
+.stat-tile-accent .stat-tile-value { color: var(--accent); }
+
+.analytics-section {
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: var(--radius-lg);
+  padding: 22px 26px;
+  margin-bottom: 20px;
+  box-shadow: var(--shadow-sm);
+}
+
+.analytics-section h2 {
+  font-size: 16px;
+  margin-bottom: 4px;
+}
+
+.analytics-section-sub {
+  font-size: 12.5px;
+  color: var(--text-faint);
+  margin: 0 0 18px;
+}
+
+.analytics-two-col {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 20px;
+}
+
+@media (max-width: 860px) {
+  .analytics-two-col { grid-template-columns: 1fr; }
+}
+
+.bar-chart {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+
+.bar-chart-row {
+  display: grid;
+  grid-template-columns: 110px 1fr 48px;
+  align-items: center;
+  gap: 10px;
+  position: relative;
+  border-radius: 6px;
+}
+
+.bar-chart-row:focus-visible {
+  outline: 2px solid var(--accent);
+  outline-offset: 2px;
+}
+
+.bar-chart-label {
+  font-size: 12.5px;
+  color: var(--text-soft);
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.bar-chart-track {
+  background: var(--surface-sunk);
+  border-radius: 6px;
+  overflow: hidden;
+  display: flex;
+  align-items: stretch;
+}
+
+.bar-chart-fill {
+  border-radius: 0 6px 6px 0;
+  transition: opacity 0.15s ease, width 0.3s cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+.bar-chart-value {
+  font-family: var(--font-mono);
+  font-size: 12px;
+  color: var(--text-faint);
+  text-align: right;
+  font-variant-numeric: tabular-nums;
+}
+
+.bar-chart-tooltip {
+  position: absolute;
+  left: 110px;
+  top: -6px;
+  transform: translateY(-100%);
+  background: var(--ink-950);
+  color: #fff;
+  border-radius: 6px;
+  padding: 6px 10px;
+  font-size: 12px;
+  display: flex;
+  flex-direction: column;
+  gap: 1px;
+  white-space: nowrap;
+  pointer-events: none;
+  z-index: 5;
+  box-shadow: var(--shadow-md);
+}
+
+.bar-chart-tooltip strong {
+  font-family: var(--font-mono);
+  font-size: 13px;
+}
+
+.bar-chart-tooltip span {
+  color: var(--ink-300);
+  font-size: 11px;
+}
+
+.stacked-bar-track {
+  background: var(--surface-sunk);
+  border-radius: 6px;
+  overflow: hidden;
+  display: flex;
+  align-items: stretch;
+  height: 22px;
+  gap: 2px;
+}
+
+.stacked-bar-segment {
+  position: relative;
+  transition: opacity 0.15s ease;
+  min-width: 3px;
+}
+
+.stacked-bar-segment:first-child { border-radius: 6px 0 0 6px; }
+.stacked-bar-segment:last-child { border-radius: 0 6px 6px 0; }
+
+.chart-legend {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 14px;
+  margin-top: 14px;
+  padding-top: 14px;
+  border-top: 1px solid var(--border);
+}
+
+.chart-legend-item {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  font-size: 12px;
+  color: var(--text-soft);
+}
+
+.chart-legend-swatch {
+  width: 10px;
+  height: 10px;
+  border-radius: 3px;
+  flex: none;
+}
+
+.health-table td.health-score-cell {
+  font-family: var(--font-mono);
+  font-weight: 600;
+}
+
+.health-score-good { color: var(--success); }
+.health-score-warn { color: var(--warning); }
+.health-score-bad { color: var(--error); }
+
+.analytics-empty-scope {
+  color: var(--text-soft);
+  font-size: 13.5px;
+}
 
 /* ==========================================================================
    Responsive
