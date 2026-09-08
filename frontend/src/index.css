@@ -1173,6 +1173,53 @@ button:disabled { opacity: 0.55; cursor: not-allowed; transform: none !important
 .approval-history h3 { font-size: 13px; margin: 18px 0 10px; text-transform: uppercase; letter-spacing: 0.04em; color: var(--text-faint); }
 
 /* ==========================================================================
+   Incidents
+   ========================================================================== */
+.critical-banner {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  flex-wrap: wrap;
+  background: var(--error-bg);
+  border: 1px solid var(--error-border);
+  border-radius: var(--radius-md);
+  padding: 14px 18px;
+  margin-bottom: 20px;
+  font-size: 13.5px;
+  color: var(--error);
+  animation: fade-up 0.3s ease both;
+}
+
+.critical-banner-dot {
+  width: 9px;
+  height: 9px;
+  border-radius: 50%;
+  background: var(--error);
+  flex: none;
+  animation: pulse-dot 1.8s ease-in-out infinite;
+}
+
+.critical-banner-list {
+  display: flex;
+  gap: 8px;
+  flex-wrap: wrap;
+  margin-left: auto;
+}
+
+.critical-banner-item {
+  background: var(--surface);
+  border: 1px solid var(--error-border);
+  color: var(--error);
+  border-radius: 999px;
+  padding: 4px 12px;
+  font-size: 12px;
+  font-weight: 600;
+  cursor: pointer;
+}
+
+.critical-banner-item:hover { background: var(--error); color: #fff; }
+
+/* ==========================================================================
    Responsive
    ========================================================================== */
 @media (max-width: 860px) {

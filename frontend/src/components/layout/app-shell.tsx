@@ -21,6 +21,7 @@ export function AppShell({ children }: { children: ReactNode }) {
             <NavLink to="/events">Events</NavLink>
             <NavLink to="/speakers">Speakers</NavLink>
             <NavLink to="/tasks">Tasks</NavLink>
+            <NavLink to="/incidents">Incidents</NavLink>
           </nav>
           <HealthIndicator />
         </div>

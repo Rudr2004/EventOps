@@ -146,6 +146,13 @@ export function EventDetailPage() {
           >
             View Tasks
           </button>
+          <button
+            type="button"
+            className="btn-secondary"
+            onClick={() => navigate(`/incidents?event=${event.id}`)}
+          >
+            View Incidents
+          </button>
           {availableTransitions.map((status) => (
             <button
               key={status}

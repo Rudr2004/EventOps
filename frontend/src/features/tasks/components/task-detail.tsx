@@ -4,7 +4,7 @@ import { tasksApi } from '../../../api/tasks.api';
 import { Badge } from '../../../components/ui/badge';
 import { Alert } from '../../../components/layout/alert';
 import { extractErrorMessage } from '../../../lib/extract-error-message';
-import { useUserDisplayName } from '../hooks/use-user-display-name';
+import { useUserDisplayName } from '../../../lib/hooks/use-user-display-name';
 import {
   TASK_PRIORITY_LABELS,
   TASK_STATUS_LABELS,
