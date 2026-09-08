@@ -8,6 +8,7 @@ import { EventsListPage } from './features/events/pages/events-list-page';
 import { EventDetailPage } from './features/events/pages/event-detail-page';
 import { SpeakersPage } from './features/speakers/pages/speakers-page';
 import { TaskBoardPage } from './features/tasks/pages/task-board-page';
+import { IncidentsPage } from './features/incidents/pages/incidents-page';
 import { ProtectedRoute } from './routes/protected-route';
 import { AppShell } from './components/layout/app-shell';
 
@@ -74,6 +75,16 @@ function App() {
                 <ProtectedRoute>
                   <AppShell>
                     <TaskBoardPage />
+                  </AppShell>
+                </ProtectedRoute>
+              }
+            />
+            <Route
+              path="/incidents"
+              element={
+                <ProtectedRoute>
+                  <AppShell>
+                    <IncidentsPage />
                   </AppShell>
                 </ProtectedRoute>
               }
