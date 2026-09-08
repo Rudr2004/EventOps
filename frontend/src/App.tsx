@@ -9,8 +9,10 @@ import { EventDetailPage } from './features/events/pages/event-detail-page';
 import { SpeakersPage } from './features/speakers/pages/speakers-page';
 import { TaskBoardPage } from './features/tasks/pages/task-board-page';
 import { IncidentsPage } from './features/incidents/pages/incidents-page';
+import { AnalyticsPage } from './features/analytics/pages/analytics-page';
 import { ProtectedRoute } from './routes/protected-route';
 import { AppShell } from './components/layout/app-shell';
+import { Role } from './types/auth';
 
 const queryClient = new QueryClient({
   defaultOptions: {
@@ -85,6 +87,16 @@ function App() {
                 <ProtectedRoute>
                   <AppShell>
                     <IncidentsPage />
+                  </AppShell>
+                </ProtectedRoute>
+              }
+            />
+            <Route
+              path="/analytics"
+              element={
+                <ProtectedRoute allowedRoles={[Role.ADMIN, Role.EVENT_MANAGER]}>
+                  <AppShell>
+                    <AnalyticsPage />
                   </AppShell>
                 </ProtectedRoute>
               }
